@@ -126,6 +126,20 @@ export function useRiskData(): UseRiskDataReturn {
 
   const handleWebSocketMessage = (message: WebSocketMessage) => {
     switch (message.type) {
+      case 'INITIAL_DATA':
+        // Handle initial data load from WebSocket
+        if (message.data.protocols) {
+          queryClient.setQueryData(['/api/protocols'], message.data.protocols);
+        }
+        if (message.data.agentStatus) {
+          queryClient.setQueryData(['/api/agents/status'], message.data.agentStatus);
+        }
+        if (message.data.chainStatus) {
+          queryClient.setQueryData(['/api/chains/status'], message.data.chainStatus);
+        }
+        console.log('[useRiskData] Initial data received via WebSocket');
+        break;
+
       case 'RISK_UPDATE':
         // Invalidate risk assessment queries
         queryClient.invalidateQueries({ queryKey: ['/api/risk-assessments'] });

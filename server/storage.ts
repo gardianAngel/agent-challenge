@@ -313,6 +313,7 @@ export class MemStorage implements IStorage {
     const protocol: Protocol = {
       ...insertProtocol,
       id,
+      metadata: insertProtocol.metadata || null,
       lastUpdated: new Date()
     };
     this.protocols.set(id, protocol);
@@ -346,6 +347,7 @@ export class MemStorage implements IStorage {
     const assessment: RiskAssessment = {
       ...insertAssessment,
       id,
+      metadata: insertAssessment.metadata || null,
       timestamp: new Date()
     };
     this.riskAssessments.set(insertAssessment.protocolId, assessment);
@@ -379,6 +381,7 @@ export class MemStorage implements IStorage {
     const alert: Alert = {
       ...insertAlert,
       id,
+      metadata: insertAlert.metadata || null,
       timestamp: new Date()
     };
     this.alerts.set(id, alert);

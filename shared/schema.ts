@@ -106,7 +106,7 @@ export type InsertChainStatus = z.infer<typeof insertChainStatusSchema>;
 
 // WebSocket message types
 export interface WebSocketMessage {
-  type: 'RISK_UPDATE' | 'PROTOCOL_UPDATE' | 'ALERT' | 'AGENT_STATUS' | 'CHAIN_STATUS';
+  type: 'RISK_UPDATE' | 'PROTOCOL_UPDATE' | 'ALERT' | 'AGENT_STATUS' | 'CHAIN_STATUS' | 'INITIAL_DATA';
   data: any;
   timestamp: number;
 }

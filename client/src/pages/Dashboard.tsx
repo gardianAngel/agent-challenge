@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { Sidebar } from "@/components/ui/sidebar";
+import { Navigation } from "@/components/ui/navigation";
 import { RiskCard } from "@/components/ui/risk-card";
 import { AgentStatus } from "@/components/ui/agent-status";
 import { AlertCard } from "@/components/ui/alert-card";
@@ -84,11 +85,15 @@ export default function Dashboard() {
 
   return (
     <div className="flex h-screen overflow-hidden bg-slate-950 text-slate-200">
-      <Sidebar agentStatus={agentStatus} chainStatus={chainStatus} />
-      
       <div className="flex-1 flex flex-col overflow-hidden">
-        {/* Header */}
-        <header className="bg-slate-900 border-b border-slate-800 p-4">
+        <Navigation />
+        
+        <div className="flex flex-1 overflow-hidden">
+          <Sidebar agentStatus={agentStatus} chainStatus={chainStatus} />
+          
+          <div className="flex-1 flex flex-col overflow-hidden">
+            {/* Header */}
+            <header className="bg-slate-900 border-b border-slate-800 p-4">
           <div className="flex items-center justify-between">
             <div>
               <h2 className="text-2xl font-bold text-white">Risk Dashboard</h2>
@@ -300,6 +305,8 @@ export default function Dashboard() {
             </div>
           </div>
         </main>
+          </div>
+        </div>
       </div>
     </div>
   );

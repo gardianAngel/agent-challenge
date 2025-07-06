@@ -7,6 +7,8 @@ import { SocialSentiment } from "./socialSentiment";
 import { AlertSystem } from "./alertSystem";
 import { RiskReporting } from "./riskReporting";
 import { RiskEngine } from "./riskEngine";
+import { RealDataProvider } from "./realDataProvider";
+import { NosanaIntegration } from "./nosanaIntegration";
 import { WebSocketMessage, RiskUpdateMessage, ProtocolUpdateMessage, AlertMessage } from "@shared/schema";
 
 export interface AgentConfig {
@@ -34,9 +36,13 @@ export class MasterOrchestrator {
   private orchestrationInterval: NodeJS.Timeout | null = null;
   private isRunning = false;
   private riskEngine: RiskEngine;
+  private realDataProvider: RealDataProvider;
+  private nosanaIntegration: NosanaIntegration;
 
   private constructor() {
     this.riskEngine = RiskEngine.getInstance();
+    this.realDataProvider = RealDataProvider.getInstance();
+    this.nosanaIntegration = NosanaIntegration.getInstance();
     this.initializeAgentConfigs();
   }
 
@@ -107,6 +113,12 @@ export class MasterOrchestrator {
 
       // Initialize all agents
       await this.initializeAgents();
+      
+      // Initialize real data provider
+      await this.realDataProvider.startDataSync();
+      
+      // Initialize Nosana integration
+      await this.nosanaIntegration.initialize(webSocketServer);
       
       // Start orchestration
       await this.startOrchestration();

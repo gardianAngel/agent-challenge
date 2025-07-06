@@ -3,6 +3,8 @@ import { createServer, type Server } from "http";
 import { WebSocketServer, WebSocket } from "ws";
 import { storage } from "./storage";
 import { MasterOrchestrator } from "./services/masterOrchestrator";
+import { NosanaIntegration } from "./services/nosanaIntegration";
+import { RealDataProvider } from "./services/realDataProvider";
 import { WebSocketMessage } from "@shared/schema";
 
 export async function registerRoutes(app: Express): Promise<Server> {
@@ -45,6 +47,43 @@ export async function registerRoutes(app: Express): Promise<Server> {
       res.json(protocols);
     } catch (error) {
       res.status(500).json({ error: 'Failed to fetch protocols' });
+    }
+  });
+
+  // Get Nosana network status
+  app.get('/api/nosana/status', async (req, res) => {
+    try {
+      const nosana = NosanaIntegration.getInstance();
+      const status = nosana.getNetworkStatus();
+      res.json(status);
+    } catch (error) {
+      console.error('Nosana status error:', error);
+      res.status(500).json({ error: 'Failed to fetch Nosana status' });
+    }
+  });
+
+  // Submit job to Nosana network
+  app.post('/api/nosana/jobs', async (req, res) => {
+    try {
+      const { type, data } = req.body;
+      const nosana = NosanaIntegration.getInstance();
+      const jobId = await nosana.submitJob(type, data);
+      res.json({ jobId, status: 'submitted' });
+    } catch (error) {
+      console.error('Nosana job submission error:', error);
+      res.status(500).json({ error: 'Failed to submit job' });
+    }
+  });
+
+  // Get real market data summary
+  app.get('/api/market/summary', async (req, res) => {
+    try {
+      const realDataProvider = RealDataProvider.getInstance();
+      const summary = await realDataProvider.getMarketSummary();
+      res.json(summary || { error: 'Market data unavailable' });
+    } catch (error) {
+      console.error('Market summary error:', error);
+      res.status(500).json({ error: 'Failed to fetch market summary' });
     }
   });
 
@@ -235,7 +274,7 @@ async function sendInitialData(ws: WebSocket): Promise<void> {
       const chainStatus = await storage.getChainStatus();
       
       const initialData: WebSocketMessage = {
-        type: 'INITIAL_DATA' as any,
+        type: 'INITIAL_DATA',
         data: {
           protocols,
           agentStatus,
